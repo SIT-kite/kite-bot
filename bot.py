@@ -25,8 +25,8 @@ async def echo_all(message: Message):
 
 
 async def set_bot_commands():
-	await bot.delete_my_commands()
-	await bot.set_my_commands(
+    await bot.delete_my_commands()
+    await bot.set_my_commands(
         commands=[
             BotCommand('command1', 'command1 description'),
             BotCommand('command2', 'command2 description'),
@@ -34,19 +34,23 @@ async def set_bot_commands():
         ]
     )
 
+
 async def send_text_message(text: str):
-	await bot.send_message(
+    await bot.send_message(
         chat_id=current_config.chat_id,
         text=text,
-	)
+    )
+
 
 async def polling():
-	await bot.polling()
+    await bot.polling()
 
 
 async def bot_main():
-	await set_bot_commands()
-	await polling()
+    await set_bot_commands()
+    await send_text_message('KiteBot started!!!')
+    await polling()
+
 
 __all__ = [
     'bot',
