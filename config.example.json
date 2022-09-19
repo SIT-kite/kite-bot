@@ -1,4 +1,5 @@
 {
     "proxy": "PROXY",
-    "token": "TOKEN"
+    "token": "TOKEN",
+    "chat_id": "CHAT ID"
 }
