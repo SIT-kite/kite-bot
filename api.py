@@ -1,11 +1,16 @@
+import json
 from aiohttp.web import *
 import bot
+import txc_entity
 
 app = Application()
 
 async def handle(request: Request):
-    print('收到反馈')
-    await bot.send_text_message(request.content)
+    bs = await request.content.read()
+    content = bs.decode('utf-8')
+    e = txc_entity.HookEntity.fromDict(json.loads(content))
+    payload: txc_entity.PostEntity = e.payload
+    await bot.send_text_message(payload.content)
     return Response(status=200)
 
 app.add_routes([
