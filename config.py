@@ -12,11 +12,22 @@ class ReplyUserConfig:
 
 @dataclass_json
 @dataclass
+class DatabaseConfig:
+    username: str
+    password: str
+    host: str
+    port: int
+    database: str
+
+
+@dataclass_json
+@dataclass
 class KiteBotConfig:
     proxy: str
     token: str
     chat_id: str
     reply_user: ReplyUserConfig
+    database: DatabaseConfig
 
 
 with open('config.json', encoding='utf-8') as f:

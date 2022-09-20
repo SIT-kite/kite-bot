@@ -1,5 +1,12 @@
 {
     "proxy": "PROXY",
     "token": "TOKEN",
-    "chat_id": "CHAT ID"
+    "chat_id": "CHAT ID",
+    "database": {
+        "username": "USERNAME",
+        "password": "PASSWORD",
+        "database": "DATABASE",
+        "host": "HOST",
+        "port": 5432
+    }
 }

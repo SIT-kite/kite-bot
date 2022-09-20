@@ -18,26 +18,25 @@ async def send_current_time(message: Message):
     await bot.reply_to(message, bm.build_current_time())
 
 
-@bot.callback_query_handler(func=lambda x: x.data=='open')
-async def button_handler(query: CallbackQuery):
-
-    await send_text_message(f'按钮被点击：{query.data}')
-
-
-@bot.message_handler(commands=['button'])
-async def send_btn_message(message: Message):
+@bot.message_handler(commands=['database'])
+async def send_database_option(message: Message):
     await bot.send_message(
         chat_id=current_config.chat_id,
-        text='button test',
+        text='可用操作如下：',
         reply_markup=InlineKeyboardMarkup(
-            keyboard=[[
-                InlineKeyboardButton(
-                    text='打开上应小风筝首页',
-                    callback_data='open',
-                )
-            ]]
+            keyboard=[
+                [InlineKeyboardButton(text='查询前三条公告', callback_data='open'),
+                 InlineKeyboardButton(text='查询目前总用户数', callback_data='open')],
+                [InlineKeyboardButton(text='查询前三条公告', callback_data='open'),
+                 InlineKeyboardButton(text='查询目前总用户数', callback_data='open')]
+            ]
         ),
     )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'open')
+async def button_handler(query: CallbackQuery):
+    await send_text_message(f'按钮被点击：{query.data}')
 
 
 @bot.message_handler(func=lambda m: True)
@@ -66,8 +65,7 @@ async def set_bot_commands():
     await bot.set_my_commands(
         commands=[
             BotCommand('now', '获取当前时间'),
-            BotCommand('reply', '回复'),
-            BotCommand('button', '测试一个按钮'),
+            BotCommand('database', '数据库相关查询'),
         ]
     )
 
