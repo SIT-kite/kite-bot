@@ -47,7 +47,7 @@ async def polling():
 
 async def bot_main():
     await set_bot_commands()
-    await send_text_message('KiteBot started!!!')
+    await send_text_message(f'KiteBot started at {bm.build_current_time()}!!!')
     await polling()
 
 
