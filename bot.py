@@ -10,8 +10,6 @@ from config import current_config
 
 import database
 
-database.connect()
-
 asyncio_helper.proxy = current_config.proxy
 
 bot = AsyncTeleBot(current_config.token)
@@ -40,12 +38,12 @@ async def send_database_option(message: Message):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_top_3_notice')
 async def select_top_3_notice_button_handler(query: CallbackQuery):
-    await send_text_message(f'{await database.select_top_3_notice()}')
+    await send_text_message(f'公告消息：{await database.select_top_3_notice()}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
 async def select_user_count_button_handler(query: CallbackQuery):
-    await send_text_message(f'{await database.select_user_count()}')
+    await send_text_message(f'目前总用户数：{await database.select_user_count()}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'open')
@@ -96,6 +94,7 @@ async def polling():
 
 
 async def bot_main():
+    await database.connect()
     await set_bot_commands()
     await send_text_message(f'KiteBot started at {bm.build_current_time()}!!!')
     await polling()
