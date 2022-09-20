@@ -87,3 +87,4 @@ if __name__ == '__main__':
     j = json.loads(a)
     # print(json.dumps(j, indent=4))
     b: TxcHookEntity = TxcHookEntity.from_dict(j)
+    print(b)

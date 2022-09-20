@@ -7,17 +7,18 @@ from txc_entity import TxcHookEntity, POST_CREATED
 app = Application()
 
 
-async def handle(request: Request):
+async def txc_hook_handler(request: Request, extra_msg: str):
     bs = await request.content.read()
     content = bs.decode('utf-8')
     txc_message: TxcHookEntity = TxcHookEntity.from_dict(json.loads(content))
     if txc_message.type == POST_CREATED:
-        await bot.send_text_message(bot_message.build_txc_post_message(txc_message))
+        await bot.send_text_message(bot_message.build_txc_post_message(txc_message, extra_msg))
     return Response(status=200)
 
 
 app.add_routes([
-    post('/feedback_hook', handle)
+    post('/hook/txc/feedback', lambda r: txc_hook_handler(r, "消息来源：反馈")),
+    post('/hook/txc/qa', lambda r: txc_hook_handler(r, "消息来源：问答"))
 ])
 
 
