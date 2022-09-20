@@ -40,6 +40,17 @@ async def send_btn_message(message: Message):
     )
 
 
+@bot.message_handler(commands=['reply'])
+async def reply_txc_message(message: Message):
+    reply_to_message = message.reply_to_message.text
+    post_url = reply_to_message.splitlines()[3].split(':')[1].strip()
+    reply_message = message.text
+    await bot.reply_to(
+        message=message,
+        text=f'您正在回复帖子：{post_url}, 内容为：{reply_message}',
+    )
+
+
 @bot.message_handler(func=lambda m: True)
 async def echo_all(message: Message):
     if message.from_user.username == 'NoCodeToday':
@@ -53,6 +64,7 @@ async def set_bot_commands():
     await bot.set_my_commands(
         commands=[
             BotCommand('now', '获取当前时间'),
+            BotCommand('reply', '回复'),
             BotCommand('button', '测试一个按钮'),
         ]
     )
