@@ -1,10 +1,10 @@
-import datetime
-
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import *
 from telebot import asyncio_helper
 
 from config import KiteBotConfig
+
+import bot_message as bm
 
 with open('config.json') as f:
     current_config = KiteBotConfig.fromJson(f.read())
@@ -16,7 +16,7 @@ bot = AsyncTeleBot(current_config.token)
 
 @bot.message_handler(commands=['now'])
 async def send_current_time(message: Message):
-    await bot.reply_to(message, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    await bot.reply_to(message, bm.build_current_time())
 
 
 @bot.message_handler(func=lambda m: True)

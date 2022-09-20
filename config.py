@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict
-import json
-
 from dataclasses_json import dataclass_json
 
 
