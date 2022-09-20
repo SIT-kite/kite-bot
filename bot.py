@@ -19,7 +19,7 @@ async def send_current_time(message: Message):
     await bot.reply_to(message, bm.build_current_time())
 
 
-@bot.callback_query_handlers
+@bot.callback_query_handler(func=lambda x: True)
 async def button_handler(query: CallbackQuery):
     await send_text_message(f'按钮被点击：{query.data}')
 
@@ -33,7 +33,6 @@ async def send_btn_message(message: Message):
             keyboard=[[
                 InlineKeyboardButton(
                     text='打开上应小风筝首页',
-                    url='https://kite.sunnysab.cn',
                     callback_data='open',
                 )
             ]]
@@ -44,7 +43,7 @@ async def send_btn_message(message: Message):
 @bot.message_handler(func=lambda m: True)
 async def echo_all(message: Message):
     print(message)
-    await bot.reply_to(message, message.text)
+    await bot.reply_to(message, message.text.replace("吗", "").replace("？", "！"))
 
 
 async def set_bot_commands():
