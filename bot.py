@@ -29,7 +29,7 @@ async def send_database_option(message: Message):
             keyboard=[
                 [InlineKeyboardButton(text='查询前三条公告', callback_data='select_top_3_notice'),
                  InlineKeyboardButton(text='查询目前总用户数', callback_data='select_user_count')],
-                [InlineKeyboardButton(text='卧槽', callback_data='open'),
+                [InlineKeyboardButton(text='照片墙随机选择图片', callback_data='select_board_picture_random'),
                  InlineKeyboardButton(text='卧槽', callback_data='open')]
             ]
         ),
@@ -44,6 +44,20 @@ async def select_top_3_notice_button_handler(query: CallbackQuery):
 @bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
 async def select_user_count_button_handler(query: CallbackQuery):
     await send_text_message(f'目前已注册小风筝账户的总用户数：{await database.select_user_count()}')
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'select_board_picture_random')
+async def select_board_picture_random_button_handler(query: CallbackQuery):
+    record = await database.select_board_picture_random()
+    if record is None:
+        await bot.reply_to(query.message, '找不到图片')
+        return
+
+    await bot.send_photo(
+        chat_id=current_config.chat_id,
+        photo=record.path,
+        reply_to_message_id=query.message.message_id,
+    )
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'open')

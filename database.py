@@ -54,9 +54,31 @@ async def select_user_count() -> int:
     return values[0]['count']
 
 
+@dataclass_json
+@dataclass
+class BoardPictureRecord:
+    id: str
+    uid: str
+    path: str
+    thumbnail: str
+
+
+async def select_board_picture_random() -> Optional[BoardPictureRecord]:
+    values = await conn.fetch("""
+        select *
+        from board.picture
+        where random() < 0.01
+        limit 1;
+        """)
+    if len(values) > 0:
+        return BoardPictureRecord.from_dict(values[0])
+    else:
+        return None
+
+
 async def main():
     await connect()
-    print(await select_top_3_notice())
+    print(await select_board_picture_random())
     await close()
 
 
