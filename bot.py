@@ -6,8 +6,7 @@ from config import KiteBotConfig
 
 import bot_message as bm
 
-with open('config.json') as f:
-    current_config = KiteBotConfig.from_json(f.read())
+from config import current_config
 
 asyncio_helper.proxy = current_config.proxy
 
@@ -19,8 +18,9 @@ async def send_current_time(message: Message):
     await bot.reply_to(message, bm.build_current_time())
 
 
-@bot.callback_query_handler(func=lambda x: True)
+@bot.callback_query_handler(func=lambda x: x.data=='open')
 async def button_handler(query: CallbackQuery):
+
     await send_text_message(f'按钮被点击：{query.data}')
 
 
