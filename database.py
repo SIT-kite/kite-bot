@@ -46,6 +46,26 @@ async def select_top_3_notice() -> List[NoticeRecord]:
     return list(map(lambda x: NoticeRecord.from_dict(dict(x)), values))
 
 
+async def select_college_rate():
+    @dataclass_json
+    @dataclass
+    class CollegeRate:
+        college: str
+        use_count: int
+        total: int
+        rate: str
+    
+    values = await conn.fetch("""
+            select *, text(round(use_count * 1.0 / total * 100, 2)) || '%' as rate
+            from 
+                (select college, count(last_seen) as use_count, count(*) as total
+                from freshman.students s
+                group by college) t
+            order by rate desc;
+            """)
+    return list(map(lambda x: CollegeRate.from_dict(dict(x)), values))
+
+
 async def select_user_count() -> int:
     values = await conn.fetch("""
         SELECT count(*)

@@ -30,11 +30,17 @@ async def send_database_option(message: Message):
                 [InlineKeyboardButton(text='查询前三条公告', callback_data='select_top_3_notice'),
                  InlineKeyboardButton(text='查询目前总用户数', callback_data='select_user_count')],
                 [InlineKeyboardButton(text='照片墙随机选择图片', callback_data='select_board_picture_random'),
-                 InlineKeyboardButton(text='卧槽', callback_data='open')]
+                 InlineKeyboardButton(text='卧槽', callback_data='open')],
+                 [InlineKeyboardButton(text='统计各学院登录比', callback_data='select_college_rate')]
             ]
         ),
     )
 
+
+@bot.callback_query_handler(func=lambda x: x.data == 'select_college_rate')
+async def select_college_rate_button_handler(query: CallbackQuery):
+    await send_text_message(f'@{query.from_user.username} 当前学院注册统计：{await database.select_college_rate()}')
+    
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_top_3_notice')
 async def select_top_3_notice_button_handler(query: CallbackQuery):
