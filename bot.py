@@ -7,7 +7,7 @@ from config import KiteBotConfig
 import bot_message as bm
 
 with open('config.json') as f:
-    current_config = KiteBotConfig.fromJson(f.read())
+    current_config = KiteBotConfig.from_json(f.read())
 
 asyncio_helper.proxy = current_config.proxy
 
