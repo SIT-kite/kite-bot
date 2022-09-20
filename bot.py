@@ -8,6 +8,10 @@ import bot_message as bm
 
 from config import current_config
 
+import database
+
+database.connect()
+
 asyncio_helper.proxy = current_config.proxy
 
 bot = AsyncTeleBot(current_config.token)
@@ -25,18 +29,28 @@ async def send_database_option(message: Message):
         text='可用操作如下：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
-                [InlineKeyboardButton(text='查询前三条公告', callback_data='open'),
-                 InlineKeyboardButton(text='查询目前总用户数', callback_data='open')],
-                [InlineKeyboardButton(text='查询前三条公告', callback_data='open'),
-                 InlineKeyboardButton(text='查询目前总用户数', callback_data='open')]
+                [InlineKeyboardButton(text='查询前三条公告', callback_data='select_top_3_notice'),
+                 InlineKeyboardButton(text='查询目前总用户数', callback_data='select_user_count')],
+                [InlineKeyboardButton(text='卧槽', callback_data='open'),
+                 InlineKeyboardButton(text='卧槽', callback_data='open')]
             ]
         ),
     )
 
 
+@bot.callback_query_handler(func=lambda x: x.data == 'select_top_3_notice')
+async def select_top_3_notice_button_handler(query: CallbackQuery):
+    await send_text_message(f'{await database.select_top_3_notice()}')
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
+async def select_user_count_button_handler(query: CallbackQuery):
+    await send_text_message(f'{await database.select_user_count()}')
+
+
 @bot.callback_query_handler(func=lambda x: x.data == 'open')
 async def button_handler(query: CallbackQuery):
-    await send_text_message(f'按钮被点击：{query.data}')
+    await send_text_message(f'卧槽按钮被点击了：{query.data}')
 
 
 @bot.message_handler(func=lambda m: True)

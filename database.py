@@ -46,6 +46,14 @@ async def select_top_3_notice() -> List[NoticeRecord]:
     return list(map(lambda x: NoticeRecord.from_dict(dict(x)), values))
 
 
+async def select_user_count() -> int:
+    values = await conn.fetch("""
+        SELECT count(*)
+        FROM "user".account;
+    """)
+    return values[0]['count']
+
+
 async def main():
     await connect()
     print(await select_top_3_notice())
