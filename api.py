@@ -54,6 +54,7 @@ async def txc_reply_page(request: Request):
         status=200,
         body=response_text,
         content_type='text/html',
+        charset='utf-8'
     )
 
 

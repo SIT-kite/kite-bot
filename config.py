@@ -19,7 +19,7 @@ class KiteBotConfig:
     reply_user: ReplyUserConfig
 
 
-with open('config.json') as f:
+with open('config.json', encoding='utf-8') as f:
     current_config: KiteBotConfig = KiteBotConfig.from_json(f.read())
 
 __all__ = [
