@@ -40,14 +40,16 @@ async def send_btn_message(message: Message):
     )
 
 
-@bot.message_handler(commands=['reply'])
+@bot.message_handler(func=lambda m: True)
 async def reply_txc_message(message: Message):
     reply_to_message = message.reply_to_message.text
-    post_url = reply_to_message.splitlines()[3].split(':')[1].strip()
-    reply_message = message.text
+    if '兔小巢消息' not in reply_to_message:
+        return
+    # 获取消息url
+    post_url = reply_to_message.splitlines()[3].split(': ')[1].strip()
     await bot.reply_to(
         message=message,
-        text=f'您正在回复帖子：{post_url}, 内容为：{reply_message}',
+        text=f'您正在回复帖子：{post_url}, 内容为：{message.text}',
     )
 
 
