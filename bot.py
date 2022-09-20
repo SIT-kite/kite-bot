@@ -38,19 +38,19 @@ async def send_database_option(message: Message):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_top_3_notice')
 async def select_top_3_notice_button_handler(query: CallbackQuery):
-    await send_text_message(f'公告消息：{await database.select_top_3_notice()}')
+    await send_text_message(f'@{query.from_user.username} 公告消息：{await database.select_top_3_notice()}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
 async def select_user_count_button_handler(query: CallbackQuery):
-    await send_text_message(f'目前已注册小风筝账户的总用户数：{await database.select_user_count()}')
+    await send_text_message(f'@{query.from_user.username} 目前已注册小风筝账户的总用户数：{await database.select_user_count()}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_board_picture_random')
 async def select_board_picture_random_button_handler(query: CallbackQuery):
     record = await database.select_board_picture_random()
     if record is None:
-        await bot.reply_to(query.message, '找不到图片')
+        await bot.reply_to(query.message, f'@{query.from_user.username} 找不到图片')
         return
 
     await bot.send_photo(
@@ -62,7 +62,7 @@ async def select_board_picture_random_button_handler(query: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'open')
 async def button_handler(query: CallbackQuery):
-    await send_text_message(f'卧槽按钮被点击了：{query.data}')
+    await send_text_message(f'@{query.from_user.username} 卧槽按钮被点击了：{query.data}')
 
 
 @bot.message_handler(func=lambda m: True)
