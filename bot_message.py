@@ -8,8 +8,10 @@ def build_current_time():
 
 
 def build_txc_post_message(message: TxcHookEntity):
+    post = message.payload['post']
     return f"""
 创建时间: {message.created_at}
 消息类型: {message.type}
-消息内容: {message.payload['post'].content}
+消息链接: {post.post_url}
+消息内容: {post.content}
 """.strip()
