@@ -22,4 +22,5 @@ jobs:
           script: |
             cd /var/kite/kite-bot
             git pull
+            pip install -r requirements.txt
             systemctl restart kite-bot.service
