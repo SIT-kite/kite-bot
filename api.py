@@ -17,8 +17,8 @@ async def txc_hook_handler(request: Request, extra_msg: str):
 
 
 app.add_routes([
-    post('/hook/txc/feedback', lambda r: txc_hook_handler(r, "消息来源：反馈")),
-    post('/hook/txc/qa', lambda r: txc_hook_handler(r, "消息来源：问答"))
+    post('/webhook/txc/feedback', lambda r: txc_hook_handler(r, "消息来源：反馈")),
+    post('/webhook/txc/qa', lambda r: txc_hook_handler(r, "消息来源：问答"))
 ])
 
 
