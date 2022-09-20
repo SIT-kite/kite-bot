@@ -42,7 +42,9 @@ async def send_btn_message(message: Message):
 
 @bot.message_handler(func=lambda m: True)
 async def echo_all(message: Message):
-    print(message)
+    if message.from_user.username == 'NoCodeToday':
+        await bot.reply_to(message, '别水群了，快去学Rust')
+
     await bot.reply_to(message, message.text.replace("吗", "").replace("？", "！"))
 
 
