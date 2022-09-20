@@ -43,7 +43,7 @@ async def select_top_3_notice_button_handler(query: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
 async def select_user_count_button_handler(query: CallbackQuery):
-    await send_text_message(f'目前总用户数：{await database.select_user_count()}')
+    await send_text_message(f'目前已注册小风筝账户的总用户数：{await database.select_user_count()}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'open')
