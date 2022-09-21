@@ -1,0 +1,23 @@
+# 时区设置
+utc_tz_delta: 8
+bot:
+  # 代理地址
+  proxy: ''
+  # 机器人API Token
+  token: ''
+  # 群组ID
+  chat_id: ''
+
+# 兔小巢回复用户相关配置
+reply_user:
+  openid: ''
+  nickname: ''
+  avatar: ''
+
+# 数据库相关配置
+database:
+  username: ''
+  password: ''
+  database: ''
+  host: ''
+  port: 5432
