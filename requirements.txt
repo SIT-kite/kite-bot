@@ -2,3 +2,4 @@ pyTelegramBotAPI
 aiohttp
 dataclasses-json
 asyncpg
+pyyaml
