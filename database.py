@@ -2,7 +2,7 @@ import asyncio
 from dataclasses import dataclass
 
 import asyncpg
-from asyncpg import Connection, Record
+from asyncpg import Connection
 from typing import *
 import datetime
 from dataclasses_json import dataclass_json
@@ -46,15 +46,16 @@ async def select_top_3_notice() -> List[NoticeRecord]:
     return list(map(lambda x: NoticeRecord.from_dict(dict(x)), values))
 
 
-async def select_college_rate():
-    @dataclass_json
-    @dataclass
-    class CollegeRate:
-        college: str
-        use_count: int
-        total: int
-        rate: str
-    
+@dataclass_json
+@dataclass
+class CollegeRate:
+    college: str
+    use_count: int
+    total: int
+    rate: str
+
+
+async def select_college_rate() -> List[CollegeRate]:
     values = await conn.fetch("""
             select *, text(round(use_count * 1.0 / total * 100, 2)) || '%' as rate
             from 
@@ -97,8 +98,11 @@ async def select_board_picture_random() -> Optional[BoardPictureRecord]:
 
 
 async def main():
+    import util
     await connect()
-    print(await select_board_picture_random())
+    a = await select_top_3_notice()
+    t = a[0].publish_time
+    print(util.utc_2_local_tz(t))
     await close()
 
 

@@ -1,7 +1,15 @@
 {
-    "proxy": "PROXY",
-    "token": "TOKEN",
-    "chat_id": "CHAT ID",
+    "utc_tz_delta": 8,
+    "bot": {
+        "proxy": "PROXY",
+        "token": "TOKEN",
+        "chat_id": "CHAT ID"
+    },
+    "reply_user": {
+        "openid": "OPENID",
+        "nickname": "NICKNAME",
+        "avatar": "AVATAR"
+    },
     "database": {
         "username": "USERNAME",
         "password": "PASSWORD",

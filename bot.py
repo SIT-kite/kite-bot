@@ -1,18 +1,17 @@
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import *
 from telebot import asyncio_helper
-
-from config import KiteBotConfig
+import database
 
 import bot_message as bm
 
 from config import current_config
 
-import database
+bot_config = current_config.bot
 
-asyncio_helper.proxy = current_config.proxy
-
-bot = AsyncTeleBot(current_config.token)
+asyncio_helper.proxy = bot_config.proxy
+bot = AsyncTeleBot(bot_config.token)
+chat_id = bot_config.chat_id
 
 
 @bot.message_handler(commands=['now'])
@@ -23,7 +22,7 @@ async def send_current_time(message: Message):
 @bot.message_handler(commands=['database'])
 async def send_database_option(message: Message):
     await bot.send_message(
-        chat_id=current_config.chat_id,
+        chat_id=chat_id,
         text='可用操作如下：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
@@ -31,7 +30,7 @@ async def send_database_option(message: Message):
                  InlineKeyboardButton(text='查询目前总用户数', callback_data='select_user_count')],
                 [InlineKeyboardButton(text='照片墙随机选择图片', callback_data='select_board_picture_random'),
                  InlineKeyboardButton(text='卧槽', callback_data='open')],
-                 [InlineKeyboardButton(text='统计各学院登录比', callback_data='select_college_rate')]
+                [InlineKeyboardButton(text='统计各学院登录比', callback_data='select_college_rate')]
             ]
         ),
     )
@@ -39,12 +38,20 @@ async def send_database_option(message: Message):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_college_rate')
 async def select_college_rate_button_handler(query: CallbackQuery):
-    await send_text_message(f'@{query.from_user.username} 当前学院注册统计：{await database.select_college_rate()}')
-    
+    result = await database.select_college_rate()
+    ss = f'@{query.from_user.username} 当前学院注册统计：\n'
+    for r in result:
+        ss += f'{r.rate}   {r.college}   {r.use_count}/{r.total}\n'
+    await send_text_message(ss)
+
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_top_3_notice')
 async def select_top_3_notice_button_handler(query: CallbackQuery):
-    await send_text_message(f'@{query.from_user.username} 公告消息：{await database.select_top_3_notice()}')
+    result = await database.select_top_3_notice()
+    ss = f'@{query.from_user.username} 公告消息：\n\n'
+    for r in result:
+        ss += f'{r.title}\n{r.content}\n{r.publish_time}\n\n'
+    await send_text_message(ss)
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_user_count')
@@ -60,7 +67,7 @@ async def select_board_picture_random_button_handler(query: CallbackQuery):
         return
 
     await bot.send_photo(
-        chat_id=current_config.chat_id,
+        chat_id=chat_id,
         photo=record.path,
         reply_to_message_id=query.message.message_id,
     )
@@ -104,7 +111,7 @@ async def set_bot_commands():
 
 async def send_text_message(text: str):
     await bot.send_message(
-        chat_id=current_config.chat_id,
+        chat_id=chat_id,
         text=text,
     )
 
