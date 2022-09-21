@@ -1,3 +1,5 @@
+import asyncio
+
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import *
 from telebot import asyncio_helper
@@ -117,8 +119,10 @@ async def send_text_message(text: str):
 
 
 async def polling():
-    await bot.polling()
-
+    await bot.polling(
+        non_stop=True,
+        interval=1,
+    )
 
 async def bot_main():
     await database.connect()
@@ -126,6 +130,9 @@ async def bot_main():
     await send_text_message(f'KiteBot started at {bm.build_current_time()}!!!')
     await polling()
 
+
+if __name__ == '__main__':
+    asyncio.run(bot_main())
 
 __all__ = [
     'bot',
