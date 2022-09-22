@@ -34,6 +34,7 @@ class KiteBotConfig:
 @dataclass
 class Config:
     utc_tz_delta: int
+    nginx_log_file: str
     bot: KiteBotConfig
     reply_user: ReplyUserConfig
     database: DatabaseConfig

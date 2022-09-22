@@ -8,6 +8,8 @@ import database
 import bot_message as bm
 import sys_info
 from config import current_config
+import nginx_log
+from datetime import timedelta
 
 bot_config = current_config.bot
 
@@ -52,6 +54,22 @@ async def send_server_option(message: Message):
         ),
     )
 
+@bot.message_handler(commands=['nginx'])
+async def send_nginx_option(message: Message):
+    await bot.send_message(
+        chat_id=chat_id,
+        text='Nginx统计分析：',
+        reply_markup=InlineKeyboardMarkup(
+            keyboard=[
+                [InlineKeyboardButton(text='查看近十分钟的请求次数', callback_data='query_recently_10min')],
+            ]
+        ),
+    )
+
+@bot.callback_query_handler(func=lambda x: x.data == 'query_recently_10min')
+async def query_recently_10min(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n 近十分钟的API请求次数: {nginx_log.read_recently_log(timedelta(minutes=10))}'
+    await send_text_message(ss)
 
 @bot.callback_query_handler(func=lambda x: x.data == 'get_memory_info')
 async def get_memory_info(query: CallbackQuery):
@@ -141,6 +159,7 @@ async def set_bot_commands():
             BotCommand('now', '获取当前时间'),
             BotCommand('database', '数据库相关查询'),
             BotCommand('server', '服务器信息查询'),
+            BotCommand('nginx', 'Nginx统计分析'),
         ]
     )
 

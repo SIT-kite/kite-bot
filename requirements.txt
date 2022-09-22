@@ -4,3 +4,4 @@ dataclasses-json
 asyncpg
 pyyaml
 psutil
+file_read_backwards
