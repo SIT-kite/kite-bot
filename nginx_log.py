@@ -103,11 +103,10 @@ def draw_recently_24hour():
         if t.hour not in dic.keys():
             dic[t.hour] = 0
         dic[t.hour] += 1
-    plt.plot(
-        list(map(lambda x: f'{x}:00', reversed(dic.keys()))),
-        list(reversed(dic.values())),
-    )
+    plt.plot(map(lambda x: f'{x}:00', reversed(dic.keys())),
+             reversed(dic.values()))
 
     buf = BytesIO()
     plt.savefig(buf, format='png')
+    buf.seek(0)
     return buf
