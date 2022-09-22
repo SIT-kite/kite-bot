@@ -64,6 +64,7 @@ async def send_nginx_option(message: Message):
             keyboard=[
                 [InlineKeyboardButton(text='近十分钟的请求次数', callback_data='query_recently_10min'),
                  InlineKeyboardButton(text='近一小时的请求次数', callback_data='query_recently_1hour')],
+                [InlineKeyboardButton(text='近一天的请求次数', callback_data='query_recently_1day')],
             ]
         ),
     )
@@ -78,6 +79,12 @@ async def query_recently_10min(query: CallbackQuery):
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1hour')
 async def query_recently_1hour(query: CallbackQuery):
     ss = f'@{query.from_user.username} \n 近一小时的API请求次数: {nginx_log.read_recently_log(timedelta(hours=1))}'
+    await send_text_message(ss)
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1day')
+async def query_recently_1day(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n 近一天的API请求次数: {nginx_log.read_recently_log(timedelta(days=1))}'
     await send_text_message(ss)
 
 
