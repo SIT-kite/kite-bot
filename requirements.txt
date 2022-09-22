@@ -3,3 +3,4 @@ aiohttp
 dataclasses-json
 asyncpg
 pyyaml
+psutil

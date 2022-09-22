@@ -6,7 +6,7 @@ from telebot import asyncio_helper
 import database
 
 import bot_message as bm
-
+import sys_info
 from config import current_config
 
 bot_config = current_config.bot
@@ -36,6 +36,39 @@ async def send_database_option(message: Message):
             ]
         ),
     )
+
+
+@bot.message_handler(commands=['server'])
+async def send_server_option(message: Message):
+    await bot.send_message(
+        chat_id=chat_id,
+        text='查看服务器状态：',
+        reply_markup=InlineKeyboardMarkup(
+            keyboard=[
+                [InlineKeyboardButton(text='内存', callback_data='get_memory_info'),
+                 InlineKeyboardButton(text='磁盘', callback_data='get_disks_info')],
+                [InlineKeyboardButton(text='登录用户', callback_data='get_users_info')],
+            ]
+        ),
+    )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'get_memory_info')
+async def get_memory_info(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n {sys_info.get_memory_info()}'
+    await send_text_message(ss)
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'get_disks_info')
+async def get_disks_info(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n {sys_info.get_disks_info()}'
+    await send_text_message(ss)
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'get_users_info')
+async def get_users_info(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n {sys_info.get_users_info()}'
+    await send_text_message(ss)
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'select_college_rate')
@@ -107,6 +140,7 @@ async def set_bot_commands():
         commands=[
             BotCommand('now', '获取当前时间'),
             BotCommand('database', '数据库相关查询'),
+            BotCommand('server', '服务器信息查询'),
         ]
     )
 
