@@ -124,6 +124,7 @@ async def polling():
         interval=1,
     )
 
+
 async def bot_main():
     await database.connect()
     await set_bot_commands()

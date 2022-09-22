@@ -85,6 +85,6 @@ if __name__ == '__main__':
         b'"created_at":"2022-09-19T23:57:07+08:00","retry_count":0}'.decode(
         'utf-8')
     j = json.loads(a)
-    # print(json.dumps(j, indent=4))
+    print(json.dumps(j, indent=4))
     b: TxcHookEntity = TxcHookEntity.from_dict(j)
     print(b)

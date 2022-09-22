@@ -17,7 +17,7 @@ async def txc_hook_handler(request: Request, extra_msg: str):
         msg = bot_message.build_txc_post_message(txc_message, extra_msg)
         post_url = txc_message.payload['post'].post_url
         await bot.bot.send_message(
-            chat_id=current_config.chat_id,
+            chat_id=current_config.bot.chat_id,
             text=msg,
             reply_markup=InlineKeyboardMarkup(
                 keyboard=[[
