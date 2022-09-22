@@ -16,12 +16,11 @@ def get_memory_info():
     """
     mem = psutil.virtual_memory()
 
-    mem_str = f"""内存状态如下:
+    return f"""内存状态如下:
 系统的内存容量为: {int(mem.total / EXPAND)} MB
 系统的内存已使用容量为: {int(mem.used / EXPAND)} MB
 系统可用的内存容量为: {int((mem.total - mem.used) / EXPAND)} MB
 """
-    return mem_str
 
 
 def get_disks_info():
@@ -36,6 +35,7 @@ def get_disks_info():
 {p}盘容量为: {int(disk.total / EXPAND)} MB
 {p}盘已使用容量为: {int(disk.used / EXPAND)} MB
 {p}盘可用的内存容量为: {int(disk.free / EXPAND)} MB
+
 """
     return disk_str
 
@@ -43,10 +43,18 @@ def get_disks_info():
 def get_users_info():
     from datetime import datetime
     user_status = psutil.users()
-    user_str = "登录用户信息如下:\n"
+
+    user_str_set = set()
     for item in user_status:
-        user_str += f'name：{item.name} host: {item.host} started: {datetime.fromtimestamp(item.started)}\n'
-    return user_str
+        user_str_set.add(f"""用户名：{item.name}
+登录主机: {item.host}
+登录时间: {datetime.fromtimestamp(item.started)}
+
+""")
+
+    return f"""登录用户信息如下:
+{''.join(user_str_set)}    
+"""
 
 
 if __name__ == '__main__':
