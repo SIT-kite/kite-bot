@@ -104,7 +104,7 @@ def draw_recently_24hour():
             dic[t.hour] = 0
         dic[t.hour] += 1
     plt.plot(
-        list(map(lambda x: f'{x}:00', reversed(dic.keys()))),
+        list(map(lambda x: f'{x}', reversed(dic.keys()))),
         list(reversed(dic.values())),
     )
 
