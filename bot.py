@@ -64,10 +64,20 @@ async def send_nginx_option(message: Message):
             keyboard=[
                 [InlineKeyboardButton(text='近十分钟的请求次数', callback_data='query_recently_10min'),
                  InlineKeyboardButton(text='近一小时的请求次数', callback_data='query_recently_1hour')],
-                [InlineKeyboardButton(text='近一天的请求次数', callback_data='query_recently_1day')],
+                [InlineKeyboardButton(text='近一天的请求次数', callback_data='query_recently_1day'),
+                 InlineKeyboardButton(text='近24小时请求折线图', callback_data='draw_recently_24hour')],
             ]
         ),
     )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'draw_recently_24hour')
+async def draw_recently_24hour(query: CallbackQuery):
+    with nl.draw_recently_24hour() as f:
+        await bot.send_photo(
+            chat_id=chat_id,
+            photo=f,
+        )
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_10min')

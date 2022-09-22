@@ -92,3 +92,19 @@ def count_generator(gen: Generator):
 
 def count_request_num(before_delta: timedelta):
     return count_generator(generate_recently_log(before_delta))
+
+
+def draw_recently_24hour():
+    import matplotlib.pyplot as plt
+    from io import BytesIO
+    dic = {}
+    for log in generate_recently_log(timedelta(days=1)):
+        t = log.time
+        if t.hour not in dic.keys():
+            dic[t.hour] = 0
+        dic[t.hour] += 1
+    plt.plot(map(lambda x: f'{x}:00', reversed(dic.keys())), reversed(dic.values()))
+
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    return buf
