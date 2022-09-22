@@ -8,7 +8,7 @@ import database
 import bot_message as bm
 import sys_info
 from config import current_config
-import nginx_log
+import nginx_log as nl
 from datetime import timedelta
 
 bot_config = current_config.bot
@@ -72,19 +72,19 @@ async def send_nginx_option(message: Message):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_10min')
 async def query_recently_10min(query: CallbackQuery):
-    ss = f'@{query.from_user.username} \n 近十分钟的API请求次数: {nginx_log.read_recently_log(timedelta(minutes=10))}'
+    ss = f'@{query.from_user.username} \n 近十分钟的API请求次数: {nl.count_request_num(timedelta(minutes=10))} '
     await send_text_message(ss)
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1hour')
 async def query_recently_1hour(query: CallbackQuery):
-    ss = f'@{query.from_user.username} \n 近一小时的API请求次数: {nginx_log.read_recently_log(timedelta(hours=1))}'
+    ss = f'@{query.from_user.username} \n 近一小时的API请求次数: {nl.count_request_num(timedelta(hours=1))}'
     await send_text_message(ss)
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1day')
 async def query_recently_1day(query: CallbackQuery):
-    ss = f'@{query.from_user.username} \n 近一天的API请求次数: {nginx_log.read_recently_log(timedelta(days=1))}'
+    ss = f'@{query.from_user.username} \n 近一天的API请求次数: {nl.count_request_num(timedelta(days=1))}'
     await send_text_message(ss)
 
 

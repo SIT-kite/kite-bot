@@ -71,15 +71,24 @@ for i, v in enumerate(calendar.month_abbr):
     month_table[v] = i
 
 
-def read_recently_log(before_delta: timedelta):
-    cnt = 0
+def generate_recently_log(before_delta: timedelta):
     end = util.now_utc_time()
     start = end - before_delta
     with FileReadBackwards(nginx_log_file, encoding="utf-8") as frb:
         for line in frb:
             log_line = parse_line(line)
             if start <= log_line.time:
-                cnt += 1
+                yield log_line
             else:
                 break
+
+
+def count_generator(gen: Generator):
+    cnt = 0
+    for _ in gen:
+        cnt += 1
     return cnt
+
+
+def count_request_num(before_delta: timedelta):
+    return count_generator(generate_recently_log(before_delta))
