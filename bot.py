@@ -54,6 +54,7 @@ async def send_server_option(message: Message):
         ),
     )
 
+
 @bot.message_handler(commands=['nginx'])
 async def send_nginx_option(message: Message):
     await bot.send_message(
@@ -61,15 +62,24 @@ async def send_nginx_option(message: Message):
         text='Nginx统计分析：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
-                [InlineKeyboardButton(text='查看近十分钟的请求次数', callback_data='query_recently_10min')],
+                [InlineKeyboardButton(text='近十分钟的请求次数', callback_data='query_recently_10min'),
+                 InlineKeyboardButton(text='近一小时的请求次数', callback_data='query_recently_1hour')],
             ]
         ),
     )
+
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_10min')
 async def query_recently_10min(query: CallbackQuery):
     ss = f'@{query.from_user.username} \n 近十分钟的API请求次数: {nginx_log.read_recently_log(timedelta(minutes=10))}'
     await send_text_message(ss)
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1hour')
+async def query_recently_1hour(query: CallbackQuery):
+    ss = f'@{query.from_user.username} \n 近一小时的API请求次数: {nginx_log.read_recently_log(timedelta(hours=1))}'
+    await send_text_message(ss)
+
 
 @bot.callback_query_handler(func=lambda x: x.data == 'get_memory_info')
 async def get_memory_info(query: CallbackQuery):
