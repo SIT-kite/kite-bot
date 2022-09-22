@@ -78,6 +78,8 @@ def read_recently_log(before_delta: timedelta):
     with FileReadBackwards(nginx_log_file, encoding="utf-8") as frb:
         for line in frb:
             log_line = parse_line(line)
-            if start <= log_line.time <= end:
+            if start <= log_line.time:
                 cnt += 1
+            else:
+                break
     return cnt
