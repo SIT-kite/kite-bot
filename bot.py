@@ -19,12 +19,12 @@ bot = AsyncTeleBot(bot_config.token)
 chat_id = bot_config.chat_id
 
 
-@bot.message_handler(chat_id=[chat_id], commands=['now'])
+@bot.message_handler(commands=['now'])
 async def send_current_time(message: Message):
     await bot.reply_to(message, bm.build_current_time())
 
 
-@bot.message_handler(chat_id=[chat_id], commands=['database'])
+@bot.message_handler(commands=['database'])
 async def send_database_option(message: Message):
     await bot.reply_to(
         message=message,
@@ -41,7 +41,7 @@ async def send_database_option(message: Message):
     )
 
 
-@bot.message_handler(chat_id=[chat_id], commands=['server'])
+@bot.message_handler(commands=['server'])
 async def send_server_option(message: Message):
     await bot.reply_to(
         message=message,
@@ -57,7 +57,7 @@ async def send_server_option(message: Message):
     )
 
 
-@bot.message_handler(chat_id=[chat_id], commands=['nginx'])
+@bot.message_handler(commands=['nginx'])
 async def send_nginx_option(message: Message):
     await bot.reply_to(
         message=message,
