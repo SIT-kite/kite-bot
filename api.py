@@ -23,7 +23,9 @@ async def txc_hook_handler(request: Request, extra_msg: str):
                 keyboard=[[
                     InlineKeyboardButton(
                         text='立即回复',
-                        url=f'https://kite.sunnysab.cn/txc/reply?post_url={quote(post_url)}'
+                        web_app=WebAppInfo(
+                            url=f'https://kite.sunnysab.cn/txc/reply?post_url={quote(post_url)}',
+                        ),
                     )
                 ]]
             ),
