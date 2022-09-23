@@ -10,6 +10,7 @@ import sys_info
 from config import current_config
 import nginx_log as nl
 from datetime import timedelta
+from kite_server_status import invoke_simple_cmd
 
 bot_config = current_config.bot
 
@@ -49,7 +50,8 @@ async def send_server_option(message: Message):
             keyboard=[
                 [InlineKeyboardButton(text='内存', callback_data='get_memory_info'),
                  InlineKeyboardButton(text='磁盘', callback_data='get_disks_info')],
-                [InlineKeyboardButton(text='登录用户', callback_data='get_users_info')],
+                [InlineKeyboardButton(text='登录用户', callback_data='get_users_info'),
+                 InlineKeyboardButton(text='后端服务状态', callback_data='backend_service_status')],
             ]
         ),
     )
@@ -69,6 +71,12 @@ async def send_nginx_option(message: Message):
             ]
         ),
     )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'backend_service_status')
+async def backend_service_status(query: CallbackQuery):
+    result = await invoke_simple_cmd('systemctl status kite2.service')
+    await send_text_message(result)
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'draw_recently_24hour')
