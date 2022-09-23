@@ -1,6 +1,6 @@
 import asyncio
 
-from telebot.async_telebot import AsyncTeleBot
+from telebot.async_telebot import AsyncTeleBot, asyncio_filters
 from telebot.types import *
 from telebot import asyncio_helper
 import database
@@ -19,15 +19,15 @@ bot = AsyncTeleBot(bot_config.token)
 chat_id = bot_config.chat_id
 
 
-@bot.message_handler(commands=['now'])
+@bot.message_handler(chat_id=[chat_id], commands=['now'])
 async def send_current_time(message: Message):
     await bot.reply_to(message, bm.build_current_time())
 
 
-@bot.message_handler(commands=['database'])
+@bot.message_handler(chat_id=[chat_id], commands=['database'])
 async def send_database_option(message: Message):
-    await bot.send_message(
-        chat_id=chat_id,
+    await bot.reply_to(
+        message=message,
         text='可用操作如下：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
@@ -41,10 +41,10 @@ async def send_database_option(message: Message):
     )
 
 
-@bot.message_handler(commands=['server'])
+@bot.message_handler(chat_id=[chat_id], commands=['server'])
 async def send_server_option(message: Message):
-    await bot.send_message(
-        chat_id=chat_id,
+    await bot.reply_to(
+        message=message,
         text='查看服务器状态：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
@@ -57,10 +57,10 @@ async def send_server_option(message: Message):
     )
 
 
-@bot.message_handler(commands=['nginx'])
+@bot.message_handler(chat_id=[chat_id], commands=['nginx'])
 async def send_nginx_option(message: Message):
-    await bot.send_message(
-        chat_id=chat_id,
+    await bot.reply_to(
+        message=message,
         text='Nginx统计分析：',
         reply_markup=InlineKeyboardMarkup(
             keyboard=[
@@ -76,14 +76,15 @@ async def send_nginx_option(message: Message):
 @bot.callback_query_handler(func=lambda x: x.data == 'backend_service_status')
 async def backend_service_status(query: CallbackQuery):
     result = await invoke_simple_cmd('systemctl status kite2.service')
-    await send_text_message(result)
+    await send_text_message(f'@{query.from_user.username} \n {result}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'draw_recently_24hour')
 async def draw_recently_24hour(query: CallbackQuery):
     with nl.draw_recently_24hour() as f:
+        await send_text_message(f'@{query.from_user.username}')
         await bot.send_photo(
-            chat_id=chat_id,
+            chat_id=query.message.chat.id,
             photo=f,
         )
 
@@ -166,27 +167,6 @@ async def button_handler(query: CallbackQuery):
     await send_text_message(f'@{query.from_user.username} 卧槽按钮被点击了：{query.data}')
 
 
-@bot.message_handler(func=lambda m: True)
-async def reply_txc_message(message: Message):
-    reply_to_message = message.reply_to_message.text
-    if '兔小巢消息' not in reply_to_message:
-        return
-    # 获取消息url
-    post_url = reply_to_message.splitlines()[3].split(': ')[1].strip()
-    await bot.reply_to(
-        message=message,
-        text=f'您正在回复帖子：{post_url}, 内容为：{message.text}',
-    )
-
-
-@bot.message_handler(func=lambda m: True)
-async def echo_all(message: Message):
-    if message.from_user.username == 'NoCodeToday':
-        await bot.reply_to(message, '别水群了，快去学Rust')
-
-    await bot.reply_to(message, message.text.replace("吗", "").replace("？", "！"))
-
-
 async def set_bot_commands():
     await bot.delete_my_commands()
     await bot.set_my_commands(
@@ -217,6 +197,7 @@ async def bot_main():
     await database.connect()
     await set_bot_commands()
     await send_text_message(f'KiteBot started at {bm.build_current_time()}!!!')
+    bot.add_custom_filter(asyncio_filters.ChatFilter())
     await polling()
 
 
