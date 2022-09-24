@@ -103,6 +103,7 @@ def draw_recently_24hour():
         if t.hour not in dic.keys():
             dic[t.hour] = 0
         dic[t.hour] += 1
+    plt.clf()
     plt.plot(
         list(map(lambda x: f'{x}', reversed(dic.keys()))),
         list(reversed(dic.values())),
