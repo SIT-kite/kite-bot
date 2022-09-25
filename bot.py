@@ -11,6 +11,7 @@ from config import current_config
 import nginx_log as nl
 from datetime import timedelta
 from kite_server_status import invoke_simple_cmd
+import util
 
 bot_config = current_config.bot
 
@@ -34,7 +35,7 @@ async def send_database_option(message: Message):
                 [InlineKeyboardButton(text='查询前三条公告', callback_data='select_top_3_notice'),
                  InlineKeyboardButton(text='查询目前总用户数', callback_data='select_user_count')],
                 [InlineKeyboardButton(text='照片墙随机选择图片', callback_data='select_board_picture_random'),
-                 InlineKeyboardButton(text='卧槽', callback_data='open')],
+                 InlineKeyboardButton(text='统计近24小时使用情况', callback_data='query_use_statistic_recently_24hours')],
                 [InlineKeyboardButton(text='统计各学院登录比', callback_data='select_college_rate')]
             ]
         ),
@@ -71,6 +72,19 @@ async def send_nginx_option(message: Message):
             ]
         ),
     )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'query_use_statistic_recently_24hours')
+async def query_use_statistic_recently_24hours(query: CallbackQuery):
+    def line_format(x: database.UseStatisticRecord):
+        ss = [f'{x.count}', x.route.page, x.route.param]
+        return '  '.join(ss)
+
+    end_time = util.now_utc_time()
+    start_time = end_time - timedelta(days=1)
+
+    content = '\n'.join(map(line_format, await database.use_statistic(start_time, end_time)))
+    await send_text_message(f'@{query.from_user.username} \n{content}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'backend_service_status')

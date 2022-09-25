@@ -1,11 +1,12 @@
 import asyncio
-from dataclasses import dataclass
+import json
 
 import asyncpg
 from asyncpg import Connection
 from typing import *
 import datetime
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, config
+from dataclasses import dataclass, field
 
 from config import current_config
 
@@ -97,12 +98,43 @@ async def select_board_picture_random() -> Optional[BoardPictureRecord]:
         return None
 
 
+@dataclass_json
+@dataclass
+class RouteRecord:
+    page: str
+    param: str = ''
+
+
+@dataclass_json
+@dataclass
+class UseStatisticRecord:
+    route: RouteRecord = field(
+        metadata=config(
+            field_name='params',
+            decoder=lambda x: RouteRecord(page='', param='') if x == '{}' else RouteRecord.from_json(x),
+        ))
+    count: int = field(metadata=config(field_name='hit'))
+
+
+async def use_statistic(start: datetime.datetime, end: datetime.datetime) -> List[UseStatisticRecord]:
+    values = await conn.fetch("""
+        select params, count(*) as hit
+        from public.history
+        where ts >= $1
+          and ts <= $2
+        group by params
+        order by hit desc;
+    """, start, end)
+    return list(map(lambda x: UseStatisticRecord.from_dict(x), values))
+
+
 async def main():
     import util
     await connect()
-    a = await select_top_3_notice()
-    t = a[0].publish_time
-    print(util.utc_2_local_tz(t))
+    end_time = util.now_utc_time()
+    start_time = end_time - datetime.timedelta(days=1)
+    a = await use_statistic(start_time, end_time)
+    print(a)
     await close()
 
 
