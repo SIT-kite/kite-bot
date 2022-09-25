@@ -6,7 +6,6 @@ from txc_entity import TxcHookEntity, POST_CREATED
 from config import current_config
 from telebot.types import *
 from urllib.parse import quote
-app = Application()
 
 
 async def txc_hook_handler(request: Request, extra_msg: str):
@@ -57,6 +56,8 @@ async def txc_reply_page(request: Request):
         charset='utf-8'
     )
 
+
+app = Application()
 
 app.add_routes([
     post('/webhook/txc/feedback', lambda r: txc_hook_handler(r, "消息来源：反馈")),
