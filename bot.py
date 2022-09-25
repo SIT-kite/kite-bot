@@ -129,8 +129,8 @@ async def get_memory_info(query: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'get_disks_info')
 async def get_disks_info(query: CallbackQuery):
-    ss = f'@{query.from_user.username} \n {sys_info.get_disks_info()}'
-    await send_text_message(ss)
+    result = await invoke_simple_cmd('df -h')
+    await send_text_message(f'@{query.from_user.username} \n{result}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'get_users_info')
