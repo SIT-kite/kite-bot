@@ -128,7 +128,7 @@ def draw_recently_24hour():
     return buf
 
 
-def api_count_order(gen: Generator[NginxLogItem]):
+def api_count_order(gen: Generator):
     result = {}
     for log in gen:
         if log.header.url not in result.keys():
