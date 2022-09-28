@@ -11,10 +11,17 @@ nginx_log_file = current_config.nginx_log_file
 
 
 @dataclass
+class RequestHeader:
+    method: str
+    url: str
+    version: str
+
+
+@dataclass
 class NginxLogItem:
     ip_addr: str
     time: datetime
-    header: str
+    header: RequestHeader
     status: int
     unknown_num: int
     user_agent: str
@@ -52,13 +59,19 @@ def parse_line(_line: str):
         tzinfo=timezone(
             offset=timedelta(
                 hours=int(tz[0:3]),
-                minutes=int(tz[3:]))
+                minutes=int(tz[3:]),
+            )
         )
     )
+    header_method, header_url, header_version = header.split(' ')
     return NginxLogItem(
         ip_addr=ip_addr,
         time=dt_with_tz,
-        header=header,
+        header=RequestHeader(
+            method=header_method,
+            url=header_url.split('?')[0],
+            version=header_version,
+        ),
         status=int(status),
         unknown_num=unknown_num,
         user_agent=ua,
@@ -113,3 +126,12 @@ def draw_recently_24hour():
     plt.savefig(buf, format='png')
     buf.seek(0)
     return buf
+
+
+def api_count_order(gen: Generator[NginxLogItem]):
+    result = {}
+    for log in gen:
+        if log.header.url not in result.keys():
+            result[log.header.url] = 0
+        result[log.header.url] += 1
+    return result

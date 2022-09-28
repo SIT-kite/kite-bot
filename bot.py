@@ -1,4 +1,5 @@
 import asyncio
+from typing import Tuple
 
 from telebot.async_telebot import AsyncTeleBot, asyncio_filters
 from telebot.types import *
@@ -6,6 +7,7 @@ from telebot import asyncio_helper
 import database
 
 import bot_message as bm
+import nginx_log
 import sys_info
 from config import current_config
 import nginx_log as nl
@@ -67,11 +69,30 @@ async def send_nginx_option(message: Message):
             keyboard=[
                 [InlineKeyboardButton(text='近十分钟的请求次数', callback_data='query_recently_10min'),
                  InlineKeyboardButton(text='近一小时的请求次数', callback_data='query_recently_1hour')],
-                [InlineKeyboardButton(text='近一天的请求次数', callback_data='query_recently_1day'),
+                [InlineKeyboardButton(text='近24小时的请求次数', callback_data='query_recently_1day'),
                  InlineKeyboardButton(text='近24小时请求折线图', callback_data='draw_recently_24hour')],
+                [InlineKeyboardButton(text='近24小时的请求统计', callback_data='query_recently_24hour_api_statistic')]
             ]
         ),
     )
+
+
+@bot.callback_query_handler(func=lambda x: x.data == 'query_recently_24hour_api_statistic')
+async def query_recently_24hour_api_statistic(query: CallbackQuery):
+    gen = nginx_log.generate_recently_log(timedelta(days=1))
+    result = []
+
+    for k, v in nginx_log.api_count_order(gen).items():
+        result.append((k, v))
+
+    sorted(result, key=lambda x: x[1], reverse=True)
+
+    def line_format(x: Tuple[str, int]):
+        ss = [f'{x[1]}', x[0]]
+        return '  '.join(ss)
+
+    content = '\n'.join(map(line_format, result))
+    await send_text_message(f'@{query.from_user.username} \n{content}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_use_statistic_recently_24hours')
@@ -117,7 +138,7 @@ async def query_recently_1hour(query: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_1day')
 async def query_recently_1day(query: CallbackQuery):
-    ss = f'@{query.from_user.username} \n 近一天的API请求次数: {nl.count_request_num(timedelta(days=1))}'
+    ss = f'@{query.from_user.username} \n 近24小时的API请求次数: {nl.count_request_num(timedelta(days=1))}'
     await send_text_message(ss)
 
 
