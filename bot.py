@@ -108,6 +108,11 @@ async def query_use_statistic_recently_24hours(query: CallbackQuery):
     await send_text_message(f'@{query.from_user.username} \n{content}')
 
 
+@bot.callback_query_handler(func=lambda x: x.data == 'txc_reply_button_click')
+async def backend_service_status(query: CallbackQuery):
+    await send_text_message(f'@{query.from_user.username} \n 点击了立即回复按钮')
+
+
 @bot.callback_query_handler(func=lambda x: x.data == 'backend_service_status')
 async def backend_service_status(query: CallbackQuery):
     result = await invoke_simple_cmd('systemctl status kite2.service')
