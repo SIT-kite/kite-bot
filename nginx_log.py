@@ -131,7 +131,11 @@ def draw_recently_24hour():
 def api_count_order(gen: Generator):
     result = {}
     for log in gen:
-        if log.header.url not in result.keys():
-            result[log.header.url] = 0
-        result[log.header.url] += 1
+        url = log.header.url
+        if not url.startswith('/api/v2'):
+            continue
+        nu = '/'.join(url.split('/')[:4])
+        if nu not in result.keys():
+            result[nu] = 0
+        result[nu] += 1
     return result
