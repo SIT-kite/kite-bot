@@ -84,7 +84,7 @@ for i, v in enumerate(calendar.month_abbr):
     month_table[v] = i
 
 
-def generate_recently_log(before_delta: timedelta):
+def generate_recently_log(before_delta: timedelta = timedelta.max):
     end = util.now_utc_time()
     start = end - before_delta
     with FileReadBackwards(nginx_log_file, encoding="utf-8") as frb:
@@ -139,3 +139,12 @@ def api_count_order(gen: Generator):
             result[nu] = 0
         result[nu] += 1
     return result
+
+def get_diff_ua(len: int)->List[str]:
+    gen = generate_recently_log()
+    s = set()
+    for log in gen:
+        s.add(log.user_agent)
+        if(len(s)>=100):
+            return list(s)
+    return list(s)

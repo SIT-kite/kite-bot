@@ -71,10 +71,16 @@ async def send_nginx_option(message: Message):
                  InlineKeyboardButton(text='近一小时的请求次数', callback_data='query_recently_1hour')],
                 [InlineKeyboardButton(text='近24小时的请求次数', callback_data='query_recently_1day'),
                  InlineKeyboardButton(text='近24小时请求折线图', callback_data='draw_recently_24hour')],
-                [InlineKeyboardButton(text='近24小时的请求统计', callback_data='query_recently_24hour_api_statistic')]
+                [InlineKeyboardButton(text='近24小时的请求统计', callback_data='query_recently_24hour_api_statistic'),
+                 InlineKeyboardButton(text='获取最近100条不同的UA', callback_data='get_recently_diff_100_ua')]
             ]
         ),
     )
+
+@bot.callback_query_handler(func=lambda x: x.data == 'get_recently_diff_100_ua')
+async def get_diff_ua(query: CallbackQuery):
+    result = '\n'.join(nginx_log.get_diff_ua(100))
+    await send_text_message(f'@{query.from_user.username} \n {result}')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_24hour_api_statistic')
