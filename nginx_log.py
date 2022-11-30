@@ -84,7 +84,7 @@ for i, v in enumerate(calendar.month_abbr):
     month_table[v] = i
 
 
-def generate_recently_log(before_delta: timedelta = timedelta.max):
+def generate_recently_log(before_delta: timedelta = timedelta(days=30)):
     end = util.now_utc_time()
     start = end - before_delta
     with FileReadBackwards(nginx_log_file, encoding="utf-8") as frb:
