@@ -140,11 +140,11 @@ def api_count_order(gen: Generator):
         result[nu] += 1
     return result
 
-def get_diff_ua(len: int)->List[str]:
+def get_diff_ua(le: int)->List[str]:
     gen = generate_recently_log()
     s = set()
     for log in gen:
         s.add(log.user_agent)
-        if len(s)>=100:
+        if len(s) >= 100:
             return list(s)
     return list(s)
