@@ -145,6 +145,6 @@ def get_diff_ua(len: int)->List[str]:
     s = set()
     for log in gen:
         s.add(log.user_agent)
-        if(len(s)>=100):
+        if len(s)>=100:
             return list(s)
     return list(s)
