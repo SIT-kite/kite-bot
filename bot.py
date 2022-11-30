@@ -80,7 +80,13 @@ async def send_nginx_option(message: Message):
 @bot.callback_query_handler(func=lambda x: x.data == 'get_recently_diff_100_ua')
 async def get_diff_ua(query: CallbackQuery):
     result = '\n'.join(nginx_log.get_diff_ua(100))
-    await send_text_message(f'@{query.from_user.username} \n {result}')
+    with open('ua.txt', 'w') as f:
+        f.write(result)
+
+    await bot.send_document(
+        chat_id=query.message.chat.id,
+        document=InputFile('ua.txt'),
+    )
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'query_recently_24hour_api_statistic')
