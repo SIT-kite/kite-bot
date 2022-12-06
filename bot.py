@@ -237,6 +237,11 @@ async def send_text_message(text: str):
         text=text,
     )
 
+@bot.message_handler(func=lambda m: True)
+async def echo_all(message: Message):
+    print(message.chat.type)
+    print(message)
+    await bot.reply_to(message, message.text)
 
 async def polling():
     await bot.polling(
