@@ -14,6 +14,8 @@ import nginx_log as nl
 from datetime import timedelta
 from kite_server_status import invoke_simple_cmd
 import util
+from datetime import datetime
+import expense_query
 
 bot_config = current_config.bot
 
@@ -237,11 +239,20 @@ async def send_text_message(text: str):
         text=text,
     )
 
-@bot.message_handler(func=lambda m: True)
+@bot.message_handler(commands=['expense'])
 async def echo_all(message: Message):
-    print(message.chat.type)
-    print(message)
-    await bot.reply_to(message, message.text)
+    account = message.text.split(' ')[1].strip()
+    result = await expense_query.query_expense(account)
+    now = datetime.now().strftime(r'%Y%m%d%H%M%S')
+    file_path = f'./tmp/expense_{account}_{now}.json'
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(result)
+
+    await bot.send_document(
+        reply_to_message_id=message.id,
+        chat_id=message.chat.id,
+        document=InputFile(file_path),
+    )
 
 async def polling():
     await bot.polling(
