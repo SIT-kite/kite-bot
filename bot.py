@@ -136,7 +136,7 @@ async def backend_service_status(query: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda x: x.data == 'bot_restart')
 async def bot_restart(query: CallbackQuery):
-    await invoke_simple_cmd('systemctl restart kite-bot.service')
+    await invoke_simple_cmd('echo "sleep 2; systemctl restart kite-bot.service" | sh &')
 
 @bot.callback_query_handler(func=lambda x: x.data == 'backend_service_restart')
 async def backend_service_restart(query: CallbackQuery):
