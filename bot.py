@@ -57,6 +57,8 @@ async def send_server_option(message: Message):
                  InlineKeyboardButton(text='磁盘', callback_data='get_disks_info')],
                 [InlineKeyboardButton(text='登录用户', callback_data='get_users_info'),
                  InlineKeyboardButton(text='后端服务状态', callback_data='backend_service_status')],
+                [InlineKeyboardButton(text='重启后端服务', callback_data='backend_service_restart'),
+                 InlineKeyboardButton(text='重启机器人', callback_data='bot_restart')],
             ]
         ),
     )
@@ -131,6 +133,15 @@ async def backend_service_status(query: CallbackQuery):
 async def backend_service_status(query: CallbackQuery):
     result = await invoke_simple_cmd('systemctl status kite2.service')
     await send_text_message(f'@{query.from_user.username} \n {result}')
+
+@bot.callback_query_handler(func=lambda x: x.data == 'bot_restart')
+async def bot_restart(query: CallbackQuery):
+    await invoke_simple_cmd('systemctl restart kite-bot.service')
+
+@bot.callback_query_handler(func=lambda x: x.data == 'backend_service_restart')
+async def backend_service_restart(query: CallbackQuery):
+    await invoke_simple_cmd('systemctl restart kite2.service')
+    await send_text_message(f'@{query.from_user.username} \n kite-server restarted')
 
 
 @bot.callback_query_handler(func=lambda x: x.data == 'draw_recently_24hour')
